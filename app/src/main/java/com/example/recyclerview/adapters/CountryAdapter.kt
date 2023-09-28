@@ -10,7 +10,10 @@ import com.bumptech.glide.Glide
 import com.example.recyclerview.R
 import com.example.recyclerview.models.CountryResponse
 
-class CountryAdapter(private val countryDataList: List<CountryResponse>) : RecyclerView.Adapter<CountryAdapter.ViewHolder>() {
+class CountryAdapter(
+    private var countryDataList: List<CountryResponse>,
+    private val onItemClick: (String) -> Unit
+) : RecyclerView.Adapter<CountryAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.country_item, parent, false)
@@ -37,7 +40,16 @@ class CountryAdapter(private val countryDataList: List<CountryResponse>) : Recyc
             Glide.with(itemView.context)
                 .load(countryData.flags.png)
                 .into(flagImageView)
+
+            itemView.setOnClickListener {
+                onItemClick(countryData.name.common)
+            }
         }
+    }
+
+    fun updateData(newData: List<CountryResponse>) {
+        countryDataList = newData
+        notifyDataSetChanged()
     }
 }
 

@@ -10,10 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.adapters.CountryAdapter
+import com.example.recyclerview.adapters.UniversityAdapter
 import com.example.recyclerview.database.dao.CountryLastUpdateTimestampDao
 import com.example.recyclerview.database.dao.UniversityDao
 import com.example.recyclerview.databinding.FragmentHomeBinding
 import com.example.recyclerview.extensions.TAG
+import com.example.recyclerview.models.CountryResponse
+import com.example.recyclerview.models.University
 import com.example.recyclerview.network.CountryApi
 import com.example.recyclerview.network.UniversityApi
 import com.example.recyclerview.repository.CountryRepository
@@ -42,6 +45,8 @@ class HomeFragment : Fragment() {
     lateinit var countryLastUpdateTimestampDao: CountryLastUpdateTimestampDao
 
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var countryAdapter: CountryAdapter
+    private lateinit var universityAdapter: UniversityAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,26 +61,38 @@ class HomeFragment : Fragment() {
 
         val universityRepository = UniversityRepository(universityApi, universityDao, countryLastUpdateTimestampDao)
         val countryRepository = CountryRepository(countryApi)
-        val viewModelFactory = UniversityViewModelFactory(universityRepository,countryRepository)
+        val viewModelFactory = UniversityViewModelFactory(universityRepository, countryRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)[UniversityViewModel::class.java]
 
         val countryRecyclerView: RecyclerView = binding.recyclerViewCountry
         val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         countryRecyclerView.layoutManager = layoutManager
 
-//        binding.fetchUniversities.setOnClickListener {
-//            viewModel.getUniversities("India")
-//        }
-
-        viewModel.getUniversitiesLiveData().observe(requireActivity()) {
-            Log.d(TAG, "$it")
+        // Initialize the adapters
+        countryAdapter = CountryAdapter(emptyList()) { selectedCountry ->
+            // When a country is selected, fetch universities for that country
+            viewModel.getUniversities(selectedCountry)
         }
+        universityAdapter = UniversityAdapter(emptyList())
 
-        viewModel.getCountries()
+        countryRecyclerView.adapter = countryAdapter
 
+        // Observe changes in the country list
         viewModel.getCountriesLiveData().observe(requireActivity()) { countryResponse ->
-            val countryAdapter = CountryAdapter(countryResponse)
-            countryRecyclerView.adapter = countryAdapter
+            countryAdapter.updateData(countryResponse)
         }
+
+        val universityRecyclerView: RecyclerView = binding.recyclerViewUniversities
+        val universityLayoutManager = LinearLayoutManager(requireContext())
+        universityRecyclerView.layoutManager = universityLayoutManager
+        universityRecyclerView.adapter = universityAdapter
+
+        // Observe changes in the university list
+        viewModel.getUniversitiesLiveData().observe(requireActivity()) { universities ->
+            universityAdapter.updateData(universities)
+        }
+
+        // Fetch the initial list of countries
+        viewModel.getCountries()
     }
 }
