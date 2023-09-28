@@ -15,26 +15,24 @@ class UniversityRepository(
 ) {
 
     suspend fun searchUniversities(country: String): List<University> {
+        val cachedData = universityDao.getUniversitiesByCountry(country)
         val isDataStale = isDataStaleForCountry(country)
 
-        return if (isDataStale) {
-            // Data found in the local database, but it's stale, fetch fresh data
+        return if (cachedData.isNotEmpty()) {
+            // Data found in the local database, return it immediately to the user
+            if (isDataStale) {
+                // If data is stale, start a background refresh
+                refreshDataInBackground(country)
+            }
+            cachedData.map { it.toUniversity() }
+        } else {
+            // Data not found locally, fetch fresh data from the API
             val freshData = api.searchUniversities(country)
-
             // Save the fresh data to the local database
             universityDao.insertUniversities(freshData.map { it.toUniversityEntity() })
-
-            // Create a CountryLastUpdateTimestampEntity instance
-            val entity = CountryLastUpdateTimestampEntity(country = country, lastUpdated = System.currentTimeMillis())
-
-            // Call the DAO method to update the timestamp
-            countryTimestampDao.updateLastUpdatedTimestamp(entity)
-
+            // Update the last updated timestamp
+            updateLastUpdatedTimestamp(country)
             freshData
-        } else {
-            // Data found in the local database, return it
-            val cachedData = universityDao.getUniversitiesByCountry(country)
-            cachedData.map { it.toUniversity() }
         }
     }
 
@@ -44,5 +42,26 @@ class UniversityRepository(
         val lastUpdatedTimestamp = countryTimestampDao.getLastUpdatedTimestamp(country)
         return (lastUpdatedTimestamp == null) || ((currentTimeMillis - lastUpdatedTimestamp) >= refreshIntervalMillis)
     }
+
+    private suspend fun refreshDataInBackground(country: String) {
+        // Perform an asynchronous refresh of data in the background
+        val freshData = api.searchUniversities(country)
+        // Save the fresh data to the local database
+        universityDao.insertUniversities(freshData.map { it.toUniversityEntity() })
+        // Update the last updated timestamp
+        updateLastUpdatedTimestamp(country)
+        // Check if the fresh data is different from the cached data
+        val cachedData = universityDao.getUniversitiesByCountry(country)
+        if (cachedData.isNotEmpty() && freshData != cachedData.map { it.toUniversity() }) {
+            // Notify the user that data has been updated (e.g., through a UI element)
+            // You can implement this notification as needed
+        }
+    }
+
+    private suspend fun updateLastUpdatedTimestamp(country: String) {
+        val entity = CountryLastUpdateTimestampEntity(country = country, lastUpdated = System.currentTimeMillis())
+        countryTimestampDao.updateLastUpdatedTimestamp(entity)
+    }
 }
+
 
