@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/university_item_background">
 
     <TextView
         android:id="@+id/textUniversityName"
@@ -13,7 +14,8 @@
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:layout_gravity="center_horizontal"
-        android:text="@string/university_name" />
+        android:text="@string/university_name"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textCountry"

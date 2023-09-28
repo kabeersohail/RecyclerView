@@ -1,0 +1,8 @@
+<!-- res/drawable/university_item_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF" /> <!-- Background color (white in this example) -->
+    <corners android:radius="8dp" /> <!-- Rounded corners (adjust radius as needed) -->
+    <stroke
+        android:width="1dp"
+        android:color="#CCCCCC" /> <!-- Border color and width -->
+</shape>
