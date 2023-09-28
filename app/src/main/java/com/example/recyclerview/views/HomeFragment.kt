@@ -1,11 +1,10 @@
 package com.example.recyclerview.views
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +13,6 @@ import com.example.recyclerview.adapters.UniversityAdapter
 import com.example.recyclerview.database.dao.CountryLastUpdateTimestampDao
 import com.example.recyclerview.database.dao.UniversityDao
 import com.example.recyclerview.databinding.FragmentHomeBinding
-import com.example.recyclerview.extensions.TAG
-import com.example.recyclerview.models.CountryResponse
-import com.example.recyclerview.models.University
 import com.example.recyclerview.network.CountryApi
 import com.example.recyclerview.network.UniversityApi
 import com.example.recyclerview.repository.CountryRepository
@@ -59,13 +55,15 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val universityRepository = UniversityRepository(universityApi, universityDao, countryLastUpdateTimestampDao)
+        val universityRepository =
+            UniversityRepository(universityApi, universityDao, countryLastUpdateTimestampDao)
         val countryRepository = CountryRepository(countryApi)
         val viewModelFactory = UniversityViewModelFactory(universityRepository, countryRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)[UniversityViewModel::class.java]
 
         val countryRecyclerView: RecyclerView = binding.recyclerViewCountry
-        val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         countryRecyclerView.layoutManager = layoutManager
 
         // Initialize the adapters
@@ -80,6 +78,18 @@ class HomeFragment : Fragment() {
         // Observe changes in the country list
         viewModel.getCountriesLiveData().observe(requireActivity()) { countryResponse ->
             countryAdapter.updateData(countryResponse)
+
+            val targetCountryName = "India"
+
+            val indexOfTargetCountry = countryResponse.indexOfFirst { response ->
+                val commonName = response.name.common
+                val officialName = response.name.official
+                commonName.equals(targetCountryName, ignoreCase = true) ||
+                        officialName.equals(targetCountryName, ignoreCase = true)
+            }
+
+            layoutManager.scrollToPosition(indexOfTargetCountry)
+            viewModel.getUniversities(targetCountryName)
         }
 
         val universityRecyclerView: RecyclerView = binding.recyclerViewUniversities
