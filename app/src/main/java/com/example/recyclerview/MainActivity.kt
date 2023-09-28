@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import com.example.recyclerview.database.dao.UniversityDao
 import com.example.recyclerview.extensions.TAG
 import com.example.recyclerview.network.UniversityApi
 import com.example.recyclerview.repository.UniversityRepository
@@ -18,11 +19,14 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var universityApi: UniversityApi
 
+    @Inject
+    lateinit var universityDao: UniversityDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val universityRepository = UniversityRepository(universityApi)
+        val universityRepository = UniversityRepository(universityApi, universityDao)
         val viewModelFactory = UniversityViewModelFactory(universityRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)[UniversityViewModel::class.java]
 
