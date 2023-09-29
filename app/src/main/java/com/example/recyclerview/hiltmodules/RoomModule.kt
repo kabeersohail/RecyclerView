@@ -3,6 +3,7 @@ package com.example.recyclerview.hiltmodules
 import android.app.Application
 import androidx.room.Room
 import com.example.recyclerview.database.UniversityDatabase
+import com.example.recyclerview.database.dao.CountryDao
 import com.example.recyclerview.database.dao.CountryLastUpdateTimestampDao
 import com.example.recyclerview.database.dao.UniversityDao
 import dagger.Module
@@ -36,4 +37,11 @@ object RoomModule {
     fun provideCountryLastUpdateTimestampDao(database: UniversityDatabase): CountryLastUpdateTimestampDao {
         return database.countryLastUpdateTimestampDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideCountryDao(database: UniversityDatabase): CountryDao {
+        return database.countryDao()
+    }
+
 }

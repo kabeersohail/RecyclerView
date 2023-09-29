@@ -8,10 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.recyclerview.R
-import com.example.recyclerview.models.CountryResponse
+import com.example.recyclerview.models.SimpleCountryData
 
 class CountryAdapter(
-    private var countryDataList: List<CountryResponse>,
+    private var countryDataList: List<SimpleCountryData>,
     private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<CountryAdapter.ViewHolder>() {
 
@@ -33,21 +33,21 @@ class CountryAdapter(
         private val countryNameTextView: TextView = itemView.findViewById(R.id.textCountryName)
         private val flagImageView: ImageView = itemView.findViewById(R.id.imageFlag)
 
-        fun bind(countryData: CountryResponse) {
-            countryNameTextView.text = countryData.name.official
+        fun bind(countryData: SimpleCountryData) {
+            countryNameTextView.text = countryData.name
 
             // Load flag image using Glide
             Glide.with(itemView.context)
-                .load(countryData.flags.png)
+                .load(countryData.pngFlagUrl)
                 .into(flagImageView)
 
             itemView.setOnClickListener {
-                onItemClick(countryData.name.common)
+                onItemClick(countryData.name)
             }
         }
     }
 
-    fun updateData(newData: List<CountryResponse>) {
+    fun updateData(newData: List<SimpleCountryData>) {
         countryDataList = newData
         notifyDataSetChanged()
     }

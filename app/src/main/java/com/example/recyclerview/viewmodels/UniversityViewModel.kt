@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recyclerview.models.CountryResponse
+import com.example.recyclerview.models.SimpleCountryData
 import com.example.recyclerview.models.University
 import com.example.recyclerview.repository.CountryRepository
 import com.example.recyclerview.repository.UniversityRepository
@@ -16,7 +17,7 @@ class UniversityViewModel(
 ) : ViewModel() {
 
     private val universitiesLiveData = MutableLiveData<List<University>>()
-    private val countriesLiveData = MutableLiveData<List<CountryResponse>>() // LiveData for countries
+    private val countriesLiveData = MutableLiveData<List<SimpleCountryData>>() // LiveData for countries
 
     fun getUniversities(country: String) {
         viewModelScope.launch {
@@ -45,7 +46,7 @@ class UniversityViewModel(
     }
 
 
-    fun getCountriesLiveData(): LiveData<List<CountryResponse>> {
+    fun getCountriesLiveData(): LiveData<List<SimpleCountryData>> {
         return countriesLiveData
     }
 }

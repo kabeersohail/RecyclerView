@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview.adapters.CountryAdapter
 import com.example.recyclerview.adapters.UniversityAdapter
+import com.example.recyclerview.database.dao.CountryDao
 import com.example.recyclerview.database.dao.CountryLastUpdateTimestampDao
 import com.example.recyclerview.database.dao.UniversityDao
 import com.example.recyclerview.databinding.FragmentHomeBinding
@@ -38,6 +39,9 @@ class HomeFragment : Fragment() {
     lateinit var universityDao: UniversityDao
 
     @Inject
+    lateinit var countryDao: CountryDao
+
+    @Inject
     lateinit var countryLastUpdateTimestampDao: CountryLastUpdateTimestampDao
 
     private lateinit var binding: FragmentHomeBinding
@@ -57,7 +61,7 @@ class HomeFragment : Fragment() {
 
         val universityRepository =
             UniversityRepository(universityApi, universityDao, countryLastUpdateTimestampDao)
-        val countryRepository = CountryRepository(countryApi)
+        val countryRepository = CountryRepository(countryApi, countryDao)
         val viewModelFactory = UniversityViewModelFactory(universityRepository, countryRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)[UniversityViewModel::class.java]
 
@@ -76,14 +80,14 @@ class HomeFragment : Fragment() {
         countryRecyclerView.adapter = countryAdapter
 
         // Observe changes in the country list
-        viewModel.getCountriesLiveData().observe(requireActivity()) { countryResponse ->
-            countryAdapter.updateData(countryResponse)
+        viewModel.getCountriesLiveData().observe(requireActivity()) { simpleCountryData ->
+            countryAdapter.updateData(simpleCountryData)
 
             val targetCountryName = "India"
 
-            val indexOfTargetCountry = countryResponse.indexOfFirst { response ->
-                val commonName = response.name.common
-                val officialName = response.name.official
+            val indexOfTargetCountry = simpleCountryData.indexOfFirst { response ->
+                val commonName = response.name
+                val officialName = response.commonName
                 commonName.equals(targetCountryName, ignoreCase = true) ||
                         officialName.equals(targetCountryName, ignoreCase = true)
             }
