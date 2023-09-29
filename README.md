@@ -32,30 +32,5 @@ The app is straightforward to use:
 3. **Data Refresh**: The app employs an offline-first approach. If the data is already present in the local database, it is immediately displayed to the user. If the data is stale (based on predefined criteria), the app fetches fresh data from the server in the background.
 4. **Web Links**: If you click on the links provided for universities' web pages, they will open in your device's default web browser.
 
-## Building the App
 
-To build the app, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/Country-University-Explorer-App.git`
-2. Open the project in Android Studio.
-3. Build and run the app on an Android emulator or a physical device.
-
-## Contribution
-
-Contributions are welcome! If you'd like to enhance the app or fix any issues, please create a pull request.
-
-## License
-
-This app is open-source and available under the [MIT License](LICENSE.md). You are free to use and modify it as per your needs.
-
----
-
-Happy exploring with the Country-University Explorer App! If you have any questions or need further assistance, please feel free to reach out.
-
-For more information on Android app development, visit [developer.android.com](https://developer.android.com/).
-
-![App Screenshot](app_screenshot.png)
-
----
-
-*Disclaimer: This README template is for demonstration purposes only. Please customize it according to your app's specific details and requirements.*
