@@ -60,7 +60,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val universityRepository =
-            UniversityRepository(universityApi, universityDao, countryLastUpdateTimestampDao)
+            UniversityRepository(requireContext(), universityApi, universityDao, countryLastUpdateTimestampDao)
         val countryRepository = CountryRepository(countryApi, countryDao)
         val viewModelFactory = UniversityViewModelFactory(universityRepository, countryRepository)
         val viewModel = ViewModelProvider(this, viewModelFactory)[UniversityViewModel::class.java]

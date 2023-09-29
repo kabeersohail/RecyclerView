@@ -1,5 +1,7 @@
 package com.example.recyclerview.extensions
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.example.recyclerview.database.entities.UniversityEntity
 import com.example.recyclerview.models.University
 
@@ -29,4 +31,10 @@ fun University.toUniversityEntity(): UniversityEntity {
         state_province = state_province,
         domains = domains
     )
+}
+
+fun Context.isNetworkAvailable(): Boolean {
+    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetworkInfo = connectivityManager.activeNetworkInfo
+    return activeNetworkInfo != null && activeNetworkInfo.isConnected
 }
