@@ -1,5 +1,8 @@
 # Country-University Explorer App
 
+<img width="415" alt="Screenshot 2023-09-30 at 12 29 48 AM" src="https://github.com/kabeersohail/RecyclerView/assets/36008727/6e206012-5bd0-4d07-af52-17e4bb0875fd">
+
+
 ## Overview
 
 This application allows users to explore information about different countries and universities. It follows modern Android app development practices and architectural patterns, making it a great example of how to build a robust and user-friendly Android app.
